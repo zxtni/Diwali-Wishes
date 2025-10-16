@@ -1,0 +1,873 @@
+/*
+ * Diwali 2025 - Festival of Lights
+ * A beautiful, interactive Diwali celebration page
+ * Support: www.github.com/zxtni
+ */
+
+/* Reset default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Color palette and variables */
+:root {
+    --gold: #d4af37;
+    --gold-light: #f4e5b0;
+    --gold-dark: #aa8a2e;
+    --bg-dark: #0a0a0f;
+    --bg-purple: #1a0a2e;
+    --text-white: #ffffff;
+    --text-light: rgba(255, 255, 255, 0.8);
+}
+
+/* Base body styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-white);
+    overflow-x: hidden;
+    cursor: none;
+}
+
+/* Flame-shaped cursor for festive feel */
+.cursor-dot {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    width: 20px;
+    height: 30px;
+    transition: transform 0.1s ease;
+}
+
+.cursor-flame {
+    width: 20px;
+    height: 30px;
+    background: linear-gradient(to top, 
+        #ff6b00 0%, 
+        #ff8c00 40%, 
+        #ffa500 70%, 
+        #ffd700 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    filter: blur(1px) drop-shadow(0 0 8px #ff8c00);
+    animation: cursorFlicker 0.15s infinite alternate;
+    position: relative;
+}
+
+.cursor-flame::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 20px;
+    background: linear-gradient(to top, 
+        rgba(255, 165, 0, 0.9) 0%, 
+        #ffd700 50%, 
+        #ffed4e 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    filter: blur(0.5px);
+}
+
+.cursor-flame::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 14px;
+    background: linear-gradient(to top, 
+        rgba(255, 237, 78, 0.9), 
+        #ffffff);
+    border-radius: 50%;
+    filter: blur(0.5px);
+}
+
+@keyframes cursorFlicker {
+    0% { 
+        transform: scaleY(1) scaleX(1);
+    }
+    100% { 
+        transform: scaleY(1.08) scaleX(0.95);
+    }
+}
+
+.cursor-outline {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.6;
+}
+
+.cursor-glow {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, 
+        rgba(255, 140, 0, 0.4) 0%, 
+        rgba(255, 107, 0, 0.2) 40%, 
+        transparent 70%);
+    border-radius: 50%;
+    animation: glowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+.cursor-outline.active {
+    transform: scale(1.5);
+}
+
+.cursor-outline.active .cursor-glow {
+    background: radial-gradient(circle, 
+        rgba(255, 215, 0, 0.5) 0%, 
+        rgba(255, 140, 0, 0.3) 40%, 
+        transparent 70%);
+}
+
+.cursor-dot.active {
+    transform: scale(1.3);
+}
+
+/* Sparkly trail that follows the cursor */
+.cursor-trail {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    box-shadow: 0 0 8px var(--gold);
+    animation: trailFade 0.6s ease-out forwards;
+}
+
+@keyframes trailFade {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* Purple gradient background */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: linear-gradient(180deg, #0a0a0f 0%, #1a0a2e 50%, #0f0517 100%);
+}
+
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Colorful lights decoration at the top */
+.string-lights {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    z-index: 50;
+    pointer-events: none;
+}
+
+/* Main content wrapper */
+.container {
+    position: relative;
+    z-index: 10;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 150px 40px 80px;
+}
+
+/* Page header with title */
+header {
+    text-align: center;
+    margin-bottom: 120px;
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards 0.3s;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+}
+
+h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+}
+
+.subtitle {
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-weight: 300;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.tagline {
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.8;
+    color: var(--text-light);
+    font-weight: 300;
+}
+
+/* Info cards grid layout */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 120px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 20px;
+    padding: 45px 35px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(30px);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.card:hover::before {
+    left: 100%;
+}
+
+.card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.card-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+.card:hover .card-icon {
+    transform: scale(1.1) rotate(10deg);
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.card-icon i {
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.card-icon::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.2), transparent);
+    border-radius: 50%;
+    filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.card:hover .card-icon::before {
+    opacity: 1;
+}
+
+.card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem;
+    color: var(--gold);
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+
+.card p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    font-weight: 300;
+}
+
+/* Traditional oil lamps section */
+.diyas-section {
+    margin: 120px 0;
+    text-align: center;
+}
+
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--gold);
+    margin-bottom: 80px;
+    font-weight: 600;
+}
+
+.diyas-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 50px;
+    flex-wrap: wrap;
+    padding: 60px 0;
+    perspective: 1000px;
+}
+
+.diya {
+    position: relative;
+    width: 160px;
+    height: 200px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    opacity: 0;
+    animation: diyaAppear 0.8s ease forwards;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes diyaAppear {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.diya:nth-child(1) { animation-delay: 0.1s; }
+.diya:nth-child(2) { animation-delay: 0.2s; }
+.diya:nth-child(3) { animation-delay: 0.3s; }
+.diya:nth-child(4) { animation-delay: 0.4s; }
+.diya:nth-child(5) { animation-delay: 0.5s; }
+.diya:nth-child(6) { animation-delay: 0.6s; }
+
+.diya:nth-child(even) .diya-body {
+    background: linear-gradient(180deg, 
+        #ffb380 0%,
+        #ff8c42 30%,
+        #ff6b35 60%,
+        #c9581e 100%);
+    border-color: #b8531a;
+}
+
+.diya:nth-child(3n) .diya-body {
+    background: linear-gradient(180deg, 
+        #ffeaa0 0%,
+        #f4d03f 30%,
+        #d4af37 60%,
+        #b8941e 100%);
+    border-color: #a08020;
+}
+
+.diya:hover {
+    transform: translateY(-20px) scale(1.1);
+    filter: drop-shadow(0 20px 35px rgba(255, 140, 0, 0.4));
+}
+
+/* Realistic flickering flame animation */
+.flame {
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 70px;
+    background: radial-gradient(ellipse at 50% 80%, 
+        #ff4500 0%, 
+        #ff6b2b 20%,
+        #ff8c00 40%, 
+        #ffa500 60%,
+        #ffd700 80%,
+        #ffed4e 100%);
+    border-radius: 50% 50% 0 0 / 75% 75% 0 0;
+    filter: blur(1.5px);
+    animation: flameFlicker 0.12s infinite alternate;
+    box-shadow: 
+        0 0 25px rgba(255, 107, 43, 0.8),
+        0 0 40px rgba(255, 140, 0, 0.6),
+        0 0 60px rgba(255, 107, 0, 0.4);
+}
+
+.flame::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 48px;
+    background: radial-gradient(ellipse at 50% 85%, 
+        rgba(255, 165, 0, 0.9) 0%, 
+        #ffd700 50%, 
+        #ffed4e 85%,
+        rgba(255, 255, 255, 0.8) 100%);
+    border-radius: 50% 50% 0 0 / 70% 70% 0 0;
+    filter: blur(0.8px);
+}
+
+.flame::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 32px;
+    background: radial-gradient(ellipse at 50% 90%, 
+        rgba(255, 237, 78, 0.95), 
+        rgba(255, 255, 255, 0.9) 70%,
+        rgba(255, 255, 255, 0.6));
+    border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+    filter: blur(0.5px);
+}
+
+@keyframes flameFlicker {
+    0% { 
+        transform: translateX(-50%) scaleY(1) scaleX(1) skewX(-1deg);
+    }
+    50% {
+        transform: translateX(-50%) scaleY(1.06) scaleX(0.98) skewX(1deg);
+    }
+    100% { 
+        transform: translateX(-50%) scaleY(1.03) scaleX(1.02) skewX(0deg);
+    }
+}
+
+/* Small wick at center */
+.wick {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 12px;
+    background: linear-gradient(to bottom, #1a0f08, #3d2817);
+    border-radius: 1px;
+    z-index: 1;
+}
+
+/* Main diya bowl with golden gradient */
+.diya-body {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 50px;
+    background: linear-gradient(180deg, 
+        #f9e4a0 0%,
+        #e8c547 30%,
+        #d4af37 60%,
+        #aa8a2e 100%);
+    border-radius: 60% 60% 50% 50% / 20% 20% 80% 80%;
+    box-shadow: 
+        inset 0 -8px 15px rgba(0, 0, 0, 0.3),
+        inset 0 8px 12px rgba(255, 255, 255, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.4);
+    border: 2px solid #b8941e;
+    overflow: visible;
+    position: relative;
+}
+
+.diya-body::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 8px;
+    background: linear-gradient(90deg, 
+        #8a7316,
+        #d4af37 50%,
+        #8a7316);
+    border-radius: 50%;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.4),
+        0 -2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.diya-body::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    width: 20px;
+    height: 25px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.3) 0%,
+        transparent 60%);
+    border-radius: 50%;
+    filter: blur(2px);
+}
+
+.diya-rim {
+    display: none;
+}
+
+.diya-base {
+    display: none;
+}
+
+/* Swipeable photo cards section */
+.memories-section {
+    margin: 120px 0;
+    text-align: center;
+}
+
+.memories-intro {
+    max-width: 700px;
+    margin: 0 auto 80px;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    font-weight: 300;
+}
+
+.stack-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+    perspective: 1000px;
+}
+
+.stack-container {
+    position: relative;
+    width: 320px;
+    height: 420px;
+    margin: 0 auto;
+}
+
+.memory-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    transform-origin: 50% 100%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    touch-action: none;
+}
+
+.memory-card.dragging {
+    cursor: grabbing;
+    transition: none;
+    z-index: 1000 !important;
+}
+
+.memory-card-inner {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(212, 175, 55, 0.3);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(212, 175, 55, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.memory-card-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(212, 175, 55, 0.1), 
+        transparent 40%,
+        rgba(212, 175, 55, 0.05) 100%);
+    pointer-events: none;
+}
+
+.memory-image-container {
+    width: 100%;
+    height: 280px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.3);
+    position: relative;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.memory-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.memory-text {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.memory-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.memory-description {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+.stack-hint {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: rgba(212, 175, 55, 0.6);
+    font-style: italic;
+}
+
+/* Final wishes card with blessings */
+.wishes {
+    background: linear-gradient(135deg, 
+        rgba(212, 175, 55, 0.05), 
+        rgba(212, 175, 55, 0.02));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 30px;
+    padding: 80px 50px;
+    text-align: center;
+    margin: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.wishes::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        transparent, 
+        rgba(212, 175, 55, 0.1), 
+        transparent);
+    border-radius: 30px;
+    z-index: -1;
+    animation: borderGlow 3s linear infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.wishes h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    color: var(--gold);
+    margin-bottom: 35px;
+    font-weight: 600;
+}
+
+.wishes-text {
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    line-height: 2;
+    color: var(--text-light);
+    max-width: 900px;
+    margin: 0 auto;
+    font-weight: 300;
+}
+
+.wishes-text strong {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.wishes-text p {
+    margin-bottom: 15px;
+}
+
+/* Floating golden sparkles */
+.sparkle {
+    position: fixed;
+    width: 3px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+    animation: sparkleFloat linear infinite;
+    box-shadow: 0 0 10px var(--gold);
+}
+
+@keyframes sparkleFloat {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    body {
+        cursor: auto;
+    }
+    
+    .cursor-dot,
+    .cursor-outline {
+        display: none;
+    }
+
+    .container {
+        padding: 100px 25px 60px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .diyas-container {
+        gap: 35px;
+    }
+
+    .diya {
+        width: 120px;
+        height: 160px;
+    }
+
+    .diya-body {
+        width: 100px;
+        height: 45px;
+    }
+
+    .diya-body::before {
+        width: 45px;
+        height: 7px;
+    }
+
+    .flame {
+        top: -35px;
+        width: 28px;
+        height: 55px;
+    }
+
+    .stack-container {
+        width: 280px;
+        height: 380px;
+    }
+
+    .memory-image-container {
+        height: 240px;
+    }
+
+    .wishes {
+        padding: 50px 30px;
+    }
+}
+
+/* Support: www.github.com/zxtni */
+
